@@ -5,13 +5,14 @@ import {useEffect, useState} from "react";
 import {axiosInstance} from "./config/https";
 
 export default function App() {
-    const [foods, setFoods] = useState([]);
+    const [data, setData] = useState([]);
     useEffect(() => {
         axiosInstance
-            .get("food/search?query=apple&offset=606&number=10")
+            // .get("food/search?query=apple&offset=606&number=10")
+            .get("titles")
             .then((response) => {
-                console.log(response.data);
-                setFoods(response.data.searchResults);
+                console.log(response.data.results);
+                setData(response.data.results.filter(item => item.primaryImage));
             })
             .catch((err) => {
                 console.log(err);
@@ -24,13 +25,14 @@ export default function App() {
                 rowSpacing={4}
                 columnSpacing={{xs: 1, sm: 1, md: 1, lg: 1}}
             >
-                {foods.map((item, index) => {
-                    return (
-                        <Grid item xs={2} md={3} lg={4} key={index}>
-                            <MediaCard name={item.name}/>
-                        </Grid>
-                    );
-                })}
+                {data
+                    .map(item => {
+                        return (
+                            <Grid item xs={2} md={3} lg={4} key={item.id}>
+                                <MediaCard data={item}/>
+                            </Grid>
+                        );
+                    })}
             </Grid>
         </Container>
     );
